@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tareas - Raúl Ochoa</title>
+
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="data-container">
+        <h1 class="todo-title">Lista de Tareas</h1>
+        
+        <div>
+            <input id="task-input" class="todo-add-input" type="text" placeholder="Ingresa una tarea" />
+            <button class="todo-add-button" onclick="addTask()">Agregar</button>
+        </div>
+
+        <div class="todo-list">
+            <ul id="list-container" class="list-container">
+            </ul>
+
+            <h4 id="no-tasks-message" class="empty-list">No hay tareas pendientes</h4>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

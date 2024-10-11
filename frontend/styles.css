@@ -1,0 +1,102 @@
+html, body {
+    margin: 0;
+    background-color: #F2FDFF;
+}
+
+.data-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    align-items: center;
+    /* background-color: red; */
+}
+
+.empty-list{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    text-align: center;
+}
+
+.todo-title {
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    text-align: center;
+}
+
+.todo-add-input{
+    width: 250px;
+    height: 30px;
+    font-size: 15px;
+    padding: 5px;
+}
+
+.todo-add-button{
+    height: 30px;
+    background-color: #B4D4EE;
+    border-color: #B4D4EE;
+    margin-left: 10px;
+
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    font-weight: 600;
+}
+
+.todo-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 50%;
+    margin-top: 20px;
+    background-color: #9AD4D6;
+}
+
+.list-container {
+    margin: 0;
+    width: 80%;
+    padding: 10px 20px 10px 20px;
+}
+
+.list-element {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    background-color: white;
+    margin: 10px 0 10px 0;
+    padding: 0 10px 0 10px;
+
+}
+
+.list-element p {
+    font-family: 'Montserrat', sans-serif;
+    color: black;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.delete-task {
+    background-color: transparent;
+    border-color: transparent;
+    cursor: pointer;
+}
+
+.task-completed {
+    text-decoration: line-through;
+}
+
+button img {
+    width: 30px;
+}
+
+ul li {
+    list-style: none;
+    user-select: none;
+    /* cursor: pointer; */
+}
+
+.hidden{
+    display: none;
+}
