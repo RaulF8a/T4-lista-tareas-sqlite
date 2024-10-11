@@ -85,7 +85,7 @@ const createTaskElement = (task) => {
     deleteButtonElement.setAttribute('onclick', `deleteTask('${id}')`);
 
     if( completada ) {
-        pElement.classList.add('task-completed');
+        listElement.classList.add('task-completed');
     }
 
     deleteButtonElement.appendChild(imgElement);
