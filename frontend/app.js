@@ -3,42 +3,76 @@ const textInput = document.getElementById('task-input');
 const taskList = document.getElementById('list-container');
 const noTaskMessage = document.getElementById('no-tasks-message');
 let taskArray = [];
-let currTaskId = 0;
 
-const addTask = () => {
-    const task = textInput.value;
+const loadFromDatabase = async () => {
+    try{
+        const response = await fetch('http://localhost:3000/tasks');
 
-    if( !task ) {
+        taskArray = await response.json();
+
+        if( taskArray.length !== 0 ) {
+            taskArray.forEach((task) => {
+                createTaskElement(task);
+            });
+        }
+    }
+    catch(err){
+        console.error(err);
+    }
+
+    updateTaskMessage();
+}
+
+const addTask = async () => {
+    const descripcion = textInput.value;
+
+    if( !descripcion ) {
         alert('Debes ingresar una tarea');
         
         return;
     }
 
-    createTaskElement(task);
+    try {
+        const response = await fetch('http://localhost:3000/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ descripcion }),
+        });
 
-    textInput.value = '';
-    taskArray.push(task);
+        const { task } = await response.json();
 
-    saveToLocalStorage();
+        createTaskElement(task);
 
-    updateTaskMessage();
+        textInput.value = '';
+        taskArray.push(task);
 
-    return;
+        updateTaskMessage();
+
+        return;
+        
+    }
+    catch(err){
+        console.error(err);
+    }
 }
 
 const createTaskElement = (task) => {
+    const { id, descripcion, completada } = task;
+
     const listElement = document.createElement('li');
-    listElement.setAttribute('id', `task-${currTaskId}` );
+    listElement.setAttribute('id', `${id}` );
 
     // Crear el div que contiene los datos de la tarea.
     const divElement = document.createElement('div');
     divElement.setAttribute('class', 'list-element');
-    divElement.setAttribute('id', `task-${currTaskId}`);
+    divElement.setAttribute('id', `${id}`);
 
     // Crear el parrafo.
     const pElement = document.createElement('p');
-    pElement.innerHTML = task;
-    pElement.setAttribute('onclick', `toggleTask('task-${currTaskId}')`);
+    pElement.innerHTML = descripcion;
+    pElement.setAttribute('onclick', `toggleTask('${id}')`);
 
     // Crear la imagen del boton.
     const imgElement = document.createElement('img');
@@ -48,7 +82,11 @@ const createTaskElement = (task) => {
     // Crear el boton.
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.setAttribute('class', 'delete-task');
-    deleteButtonElement.setAttribute('onclick', `deleteTask('task-${currTaskId}')`);
+    deleteButtonElement.setAttribute('onclick', `deleteTask('${id}')`);
+
+    if( completada ) {
+        pElement.classList.add('task-completed');
+    }
 
     deleteButtonElement.appendChild(imgElement);
 
@@ -58,33 +96,59 @@ const createTaskElement = (task) => {
     listElement.appendChild(divElement);
 
     taskList.appendChild(listElement);
-
-    currTaskId++;
 }
 
-const deleteTask = (id) => {
+const deleteTask = async (id) => {
     const element = document.getElementById(id);
-    const task = element.innerText;
     
-    element.remove();
-    taskArray = taskArray.filter( t => t !== task );
+    try{
+        const response = await fetch(`http://localhost:3000/tasks/${id}`,{ 
+            method: 'DELETE',
+        });
 
-    saveToLocalStorage();
-    updateTaskMessage();
+        const data = await response.json();
+
+        if( !data.ok ) throw new Error('Could not delete record from DB');
+        
+        element.remove();
+        taskArray = taskArray.filter( t => t.id !== id );
+    
+        updateTaskMessage();
+    }
+    catch(err){
+        console.error(err);
+    }
+
 }
 
-const saveToLocalStorage = () => {
-    localStorage.setItem('tasks', JSON.stringify(taskArray));
-}
-
-const toggleTask = (id) => {
+const toggleTask = async (id) => {
     const element = document.getElementById(id);
+    const isCompleted = element.classList.contains('task-completed');
 
-    if( element.classList.contains('task-completed') ){
+    const body = {
+        completada: 0,
+    }
+
+    if( isCompleted ){
+        body.completada = 0;
         element.classList.remove('task-completed');
     }
     else{
+        body.completada = 1;
         element.classList.add('task-completed');
+    }
+
+    try{
+        const response = await fetch(`http://localhost:3000/tasks/${id}`,{ 
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        });
+    }
+    catch(err){
+        console.error(err);
     }
 }
 
@@ -99,18 +163,4 @@ const updateTaskMessage = () => {
     }
 }
 
-(() => {
-    const tasksJSON = localStorage.getItem('tasks');
-
-    if( tasksJSON ){
-        taskArray = JSON.parse(tasksJSON);
-    }
-    
-    if( taskArray.length > 0 ) {
-        taskArray.forEach( (task) => {
-            createTaskElement(task);
-        } );
-    }
-    
-    updateTaskMessage();
-})();
+loadFromDatabase();
